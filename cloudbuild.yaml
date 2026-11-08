@@ -1,0 +1,41 @@
+steps:
+  # 1. Build the Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - 'gcr.io/mlops-dev-513820/bank-campaign-model'
+      - '.'
+
+  # 2. Push the Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'gcr.io/mlops-dev-513820/bank-campaign-model'
+
+  # 3. Run pytest inside the Docker image
+  - name: 'gcr.io/mlops-dev-513820/bank-campaign-model'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        python -m pytest
+
+  # 4. Clone your GitHub repository
+  - name: 'gcr.io/cloud-builders/git'
+    args:
+      - 'clone'
+      - 'https://github.com/kempsly/model-training-repo.git'
+
+  # 5. Copy the training module to the Composer DAGs folder
+  - name: 'gcr.io/cloud-builders/gsutil'
+    args:
+      - 'cp'
+      - 'model-training-repo/bank_campaign_model_training.py'
+      - 'gs://us-central1-mlops-orchestra-4e22ebe8-bucket/dags/'
+
+images:
+  - 'gcr.io/mlops-dev-513820/bank-campaign-model'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
