@@ -18,7 +18,6 @@ from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
 from xgboost import XGBClassifier
 
-
 PROJECT_ID = "mlops-dev-513820"
 BUCKET_NAME = "mlops-dev-513820-data"
 BIGQUERY_TABLE = (
@@ -239,6 +238,7 @@ def main():
         training_time,
         metrics,
     )
+    
 
     save_model_artifact(model_name, pipeline)
 
